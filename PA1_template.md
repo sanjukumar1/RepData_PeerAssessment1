@@ -7,7 +7,8 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r echo=TRUE}
+
+```r
 raw_data <- read.csv("repdata_data_activity/activity.csv")
 main_data <- na.omit(raw_data)
 steps_per_day <- aggregate(main_data$steps, by = list(Steps.Date = main_data$date), FUN = "sum")
@@ -15,20 +16,33 @@ hist(steps_per_day$x, col = "green",
      breaks = 20,
      main = "Total number of steps taken each day",
      xlab = "Number of steps per day")
-
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+
 ## What is mean total number of steps taken per day?
-```{r echo=TRUE}
+
+```r
 mean_steps <- mean(steps_per_day[,2])
 print (mean_steps)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 median_steps <- median(steps_per_day[,2])
 print (median_steps)
 ```
 
+```
+## [1] 10765
+```
+
 ## What is the average daily activity pattern?
-```{r echo=TRUE}
+
+```r
 avaraged_day <- aggregate(main_data$steps, 
                           by = list(Interval = main_data$interval), 
                           FUN = "mean")
@@ -41,11 +55,63 @@ plot(avaraged_day$Interval, avaraged_day$x, type = "l",
 interval_row <- which.max(avaraged_day$x)
 max_interval <- avaraged_day[interval_row,1]
 print (max_interval)
+```
 
+```
+## [1] 835
+```
+
+```r
 NA_number <- length(which(is.na(raw_data$steps)))
 print (NA_number)
+```
 
+```
+## [1] 2304
+```
+
+```r
 library(Hmisc)
+```
+
+```
+## Warning: package 'Hmisc' was built under R version 4.0.5
+```
+
+```
+## Loading required package: lattice
+```
+
+```
+## Loading required package: survival
+```
+
+```
+## Loading required package: Formula
+```
+
+```
+## Loading required package: ggplot2
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 4.0.5
+```
+
+```
+## 
+## Attaching package: 'Hmisc'
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     format.pval, units
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 raw_data_filled <- raw_data
 raw_data_filled$steps <- impute(raw_data$steps, fun=mean)
 
@@ -56,19 +122,33 @@ hist(steps_per_day_noNA$x, col = "green",
      breaks = 20,
      main = "Total number of steps taken each day (filled data)",
      xlab = "Number of steps per day")
-
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-2.png)<!-- -->
+
 ## Imputing missing values
-```{r echo=TRUE}
+
+```r
 mean_steps_noNA <- mean(steps_per_day_noNA[,2])
 print (mean_steps_noNA)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median_steps_noNA <- median(steps_per_day_noNA[,2])
 print (median_steps_noNA)
 ```
 
+```
+## [1] 10766.19
+```
+
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r echo=TRUE}
+
+```r
 raw_data_filled$date <- as.Date(raw_data_filled$date)
 raw_data_filled$weekday <- weekdays(raw_data_filled$date)
 raw_data_filled$day_type <- ifelse(raw_data_filled$weekday=="Saturday" |
@@ -84,3 +164,5 @@ ggplot(day_types_data, aes(interval, steps, color=day_type)) +
         ylab("Avarage number of steps taken") +
         ggtitle("Weekdays and weekends activity patterns")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
